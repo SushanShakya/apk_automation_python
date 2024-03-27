@@ -88,6 +88,7 @@ def upload_and_get_drive_path(apk_name):
     # Print Link
     print('\nLink : ');
     termcolor.cprint(link, 'green')
+    print("")
     
     return link
 
