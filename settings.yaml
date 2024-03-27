@@ -1,0 +1,4 @@
+client_config_backend: settings
+save_credentials: true
+save_credentials_backend: file
+save_credentials_file: E:\FunStuff\automation\creds.json
