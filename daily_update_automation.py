@@ -2,6 +2,9 @@ import json
 import requests
 import termcolor
 from halo import Halo
+import os
+
+script_path = os.path.dirname(os.path.realpath(__file__))
 
 THREAD_ID = "1171697957775609937"
 TOKEN_FILE = 'discord_token.json'
@@ -23,12 +26,13 @@ spinner_config = {
 }
 
 def authenticate():
-    with open(TOKEN_FILE, 'r') as f:
-            token_data = json.load(f)
+    with open(os.path.join(script_path, TOKEN_FILE), 'r') as f:
+        token_data = json.load(f)
     return token_data.get('access_token')
 
 @Halo(text="Updating Message", spinner=spinner_config)
-def send_message(access_token, thread_id, message_content):
+def send_message(thread_id, message_content):
+    access_token = authenticate()
     headers = {
         'Authorization': f'{access_token}',
         'Content-Type': 'application/json'
@@ -52,4 +56,6 @@ def main():
         else:
             termcolor.cprint(f'Failed to send message. Status code: {response.status_code}, Error: {response.text}','red')
 
-main()
+
+if __name__ == "__main__":
+    main()
