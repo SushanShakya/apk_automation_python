@@ -28,7 +28,8 @@ def authenticate():
     return token_data.get('access_token')
 
 @Halo(text="Updating Message", spinner=spinner_config)
-def send_message(access_token, thread_id, message_content):
+def send_message(thread_id, message_content):
+    access_token = authenticate()
     headers = {
         'Authorization': f'{access_token}',
         'Content-Type': 'application/json'
@@ -52,4 +53,6 @@ def main():
         else:
             termcolor.cprint(f'Failed to send message. Status code: {response.status_code}, Error: {response.text}','red')
 
-main()
+
+if __name__ == "__main__":
+    main()

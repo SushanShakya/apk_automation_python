@@ -69,6 +69,29 @@ def get_uploaded_file_id(drive):
 def get_apk_path(apk_name: str):
     return f"{dirpath}\\build\\app\\outputs\\flutter-apk\\{apk_name}.apk"
 
+def upload_and_get_drive_path(apk_name): 
+    # Google Authorization
+    gauth = GoogleAuth()
+    gauth.LoadClientConfigFile()
+
+    # Creation of Drive Object
+    drive = GoogleDrive(gauth)
+    path_to_apk = get_apk_path(apk_name)
+    # Upload the File to Google Drive
+    upload_to_drive(drive, path_to_apk)
+    termcolor.cprint(f"\u2713 Upload Complete !",'green')
+
+    # Load the Link to Share
+    file_id = get_uploaded_file_id(drive)
+    link = f"https://drive.google.com/file/d/{file_id}/view?usp=sharing"
+
+    # Print Link
+    print('\nLink : ');
+    termcolor.cprint(link, 'green')
+    
+    return link
+
+
 def main():
     args = obtain_args()
 
