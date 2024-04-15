@@ -52,7 +52,7 @@ def get_message(link, commits):
 
     ordered_commits = "\n".join(map(lambda i, s: f"{i}. {s}", range(1, len(commits)+1), commits))
 
-    link_message = f"APK Link:\n```{link}```" if link is not None else ""
+    link_message = f"APK Link:\n{link}" if link is not None else ""
 
     return f'''
 
@@ -83,6 +83,12 @@ def main():
         'owner': "Owners App",
     }
 
+    tags = {
+         "Customer App":'customer',
+         "Store Manager App":'employee',
+         "Owners App": 'employee',
+    }
+
     if args.app is not None:
         selected_app = apps_meta[args.app]
 
@@ -92,7 +98,7 @@ def main():
         selected_app = select_item(list(apps.keys()))
 
     if not args.update_only:
-        link = upload_and_get_drive_path(args.name)
+        link = upload_and_get_drive_path(args.name, tags[selected_app])
         save_to_file(link)
 
     message = get_message(link, args.commits)

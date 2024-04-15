@@ -8,7 +8,6 @@ import argparse
 
 dirId = "15GRbTHZbeAyN3YGpW8V5Q4Gy_Jcz31Lf"
 new_file_name = time.strftime("%Y%m%d-%H%M%S")
-new_file_title = f"{new_file_name}.apk"
 dirpath = os.getcwd()
 
 spinner_config = {
@@ -50,7 +49,7 @@ def delete_all_from_drive_except_last(drive: GoogleDrive):
         file.Delete()
 
 @Halo(text="Uploading APK to Drive", spinner=spinner_config)
-def upload_to_drive(drive: GoogleDrive, path_to_apk: str):
+def upload_to_drive(drive: GoogleDrive, path_to_apk: str, new_file_title):
     gfile = drive.CreateFile({'parents': [{'id': dirId}]})
     gfile['title'] = new_file_title 
     gfile.SetContentFile(path_to_apk)
@@ -58,7 +57,7 @@ def upload_to_drive(drive: GoogleDrive, path_to_apk: str):
     return gfile
 
 @Halo(text="Fetching Drive Link", spinner=spinner_config)
-def get_uploaded_file_id(drive):
+def get_uploaded_file_id(drive, new_file_title):
     file_list = drive.ListFile({'q': "'{}' in parents and trashed=false".format(dirId)}).GetList() 
     file_id = ""
     for file in file_list:
@@ -69,7 +68,8 @@ def get_uploaded_file_id(drive):
 def get_apk_path(apk_name: str):
     return f"{dirpath}\\build\\app\\outputs\\flutter-apk\\{apk_name}.apk"
 
-def upload_and_get_drive_path(apk_name): 
+def upload_and_get_drive_path(apk_name, tag): 
+    new_file_title = f"{new_file_name}_{tag}.apk"
     # Google Authorization
     gauth = GoogleAuth()
     gauth.LoadClientConfigFile()
@@ -78,11 +78,11 @@ def upload_and_get_drive_path(apk_name):
     drive = GoogleDrive(gauth)
     path_to_apk = get_apk_path(apk_name)
     # Upload the File to Google Drive
-    upload_to_drive(drive, path_to_apk)
+    upload_to_drive(drive, path_to_apk, new_file_title)
     termcolor.cprint(f"\u2713 Upload Complete !",'green')
 
     # Load the Link to Share
-    file_id = get_uploaded_file_id(drive)
+    file_id = get_uploaded_file_id(drive, new_file_title)
     link = f"https://drive.google.com/file/d/{file_id}/view?usp=sharing"
 
     # Print Link
@@ -94,6 +94,7 @@ def upload_and_get_drive_path(apk_name):
 
 
 def main():
+    new_file_title = f"{new_file_name}.apk"
     args = obtain_args()
 
     # Google Authorization
@@ -115,11 +116,11 @@ def main():
 
     path_to_apk = get_apk_path(args.name)
     # Upload the File to Google Drive
-    upload_to_drive(drive, path_to_apk)
+    upload_to_drive(drive, path_to_apk, new_file_title)
     termcolor.cprint(f"\u2713 Upload Complete !",'green')
 
     # Load the Link to Share
-    file_id = get_uploaded_file_id(drive)
+    file_id = get_uploaded_file_id(drive, new_file_title)
     print('\nLink : ');
     termcolor.cprint(f"https://drive.google.com/file/d/{file_id}/view?usp=sharing", 'green')
 
